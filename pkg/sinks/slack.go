@@ -8,13 +8,14 @@ import (
 )
 
 type SlackConfig struct {
-	Token   string            `yaml:"token"`
-	Channel string            `yaml:"channel"`
-	Message string            `yaml:"message"`
-	Color   string            `yaml:"color"`
-	Footer  string            `yaml:"footer"`
-	Title   string            `yaml:"title"`
-	Fields  map[string]string `yaml:"fields"`
+	Token      string            `yaml:"token"`
+	Channel    string            `yaml:"channel"`
+	Message    string            `yaml:"message"`
+	Color      string            `yaml:"color"`
+	Footer     string            `yaml:"footer"`
+	Title      string            `yaml:"title"`
+	AuthorName string            `yaml:"author_name"`
+	Fields     map[string]string `yaml:"fields"`
 }
 
 type SlackSink struct {
@@ -59,6 +60,9 @@ func (s *SlackSink) Send(ctx context.Context, ev *kube.EnhancedEvent) error {
 		// make slack attachment
 		slackAttachment := slack.Attachment{}
 		slackAttachment.Fields = fields
+		if s.cfg.AuthorName != "" {
+			slackAttachment.AuthorName = s.cfg.AuthorName
+		}
 		if s.cfg.Color != "" {
 			slackAttachment.Color = s.cfg.Color
 		}
