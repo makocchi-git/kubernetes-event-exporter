@@ -11,6 +11,8 @@ type SlackConfig struct {
 	Token   string            `yaml:"token"`
 	Channel string            `yaml:"channel"`
 	Message string            `yaml:"message"`
+	Color   string            `yaml:"color"`
+	Footer  string            `yaml:"footer"`
 	Fields  map[string]string `yaml:"fields"`
 }
 
@@ -53,6 +55,14 @@ func (s *SlackSink) Send(ctx context.Context, ev *kube.EnhancedEvent) error {
 			})
 		}
 		options = append(options, slack.MsgOptionAttachments(slack.Attachment{Fields: fields}))
+	}
+
+	if s.cfg.Color != "" {
+		options = append(options, slack.MsgOptionAttachments(slack.Attachment{Color: s.cfg.Color}))
+	}
+
+	if s.cfg.Footer != "" {
+		options = append(options, slack.MsgOptionAttachments(slack.Attachment{Footer: s.cfg.Footer}))
 	}
 
 	_ch, _ts, _text, err := s.client.SendMessageContext(ctx, channel, options...)
